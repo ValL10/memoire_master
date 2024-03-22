@@ -1,0 +1,152 @@
+{% extends 'core/base.html' %}
+
+{% block title %}
+    Effectuer un Exercice
+{% endblock %}
+
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href={% static "core/assets/codemirror/codemirror.min.css" %}>
+    <link rel="stylesheet" href={% static "core/assets/codemirror/monokai.min.css" %}>
+    <link rel="stylesheet" href={% static "core/assets/codemirror/dracula.min.css" %}>
+    <link rel="stylesheet" href={% static "core/assets/codemirror/material.min.css" %}>
+    
+    <script src={% static "core/assets/codemirror/codemirror.min.js" %}></script>
+    <script src= {% static "core/assets/codemirror/python.min.js" %}></script>
+{% endblock %}
+
+{% block navbar %}
+    {% include 'core/navbar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="text-center mt-5" style="z-index:2000; height: 20vh; display: none" id="spinner">
+
+    <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+
+    <div class="spinner-grow text-warning" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+
+    <div class="spinner-grow text-warning" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+
+</section>
+
+
+<section class=" p-1" id="content">
+    <form method="POST" action="{% url 'store_response' %}" id="ResponseForms">
+        {% csrf_token %}
+        <input type="hidden" name="exercice" value="{{ exercice.id }}">
+
+        <div class="container p-1">
+            <div class="card jumbotron m-1 p-1 shadow-sm">
+                <div class"m-2">
+                    <h5 class="p-2">{{ exercice.titre_exercice }}</h5>
+                    <h6 class="p-2">
+                        <span class="badge bg-dark"><i class="fa fa-user-tag"></i> {{ exercice.parcours_cible }} </span>
+                        <span class="badge bg-dark"><i class="fa fa-tag"></i> {{ exercice.niveau_cible }} </span>
+                        <span class="badge bg-success"><i class="fab fa-python"></i> {{ exercice.langage_exercice }} </span>
+                        <span class="badge 
+                        {% if exercice.complexite_exercice == 1 %}
+                            bg-info text-dark
+                        {% elif exercice.complexite_exercice == 2 %}
+                            bg-primary text-white
+                        {% elif exercice.complexite_exercice == 3 %}
+                            bg-success text-white
+                        {% elif exercice.complexite_exercice == 4 %}
+                            bg-warning text-dark
+                        {% else %}
+                            bg-danger text-white
+                        {%endif%}
+                        ">
+                            <i class="fas fa-layer-group"></i> Compléxité: {{ exercice.complexite_exercice }}
+                        </span>
+                    </h6>
+                    
+                    <div class="m-2">
+                        <p class="lead"> {{ exercice.description_exercice }} </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="container">
+            <div class="container mt-4 p-1">
+                <div class="row">
+                    <div class="col-lg-8 col-md-8">
+                        <div class="card p-1 shadow-sm">
+                            <div class="m-1">
+                                <h6 class="m-1"><i class="fas fa-code"></i> Editer votre code:</h6>
+                            </div>
+                            <textarea id="code-editor" name="codeValue" class="form-control codemirror m-1" rows="40"></textarea>
+                            <div class="text-end">
+                                <button type="button" class="text-right btn btn-outline-success mt-3" data-bs-toggle="modal" data-bs-target="#confirmSubmit"><i class="fas fa-check-circle"></i> Soummission</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4">
+                        <div class="card p-1 shadow-sm">
+                            <div class="m-1">
+                                <h6 class="m-1 text-primary"><i class="fas fa-comment-dots"></i> Retours:</h6>
+                                <h6 class="m-1 text-success"><i class="fas fa-poll-h"></i> Note:</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="confirmSubmit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmSubmitLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="confirmSubmitLabel">Confirmation de la soumission</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="lead">Vous êtes sur le point de soumettre une réponse pour cet exercice, voulez-vous vraiment continuer ?</p>
+                        <p class="lead"><span class="text-danger">*</span>Une fois la réponse soumise, vous ne pouvez plus la modifier. </p>     
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="fas fa-arrow-circle-left"></i> Annuler</button>
+                        <button type="submit" class="btn btn-success"><i class="fas fa-check-circle"></i> Soumettre</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+
+{% load static %}
+<script src="{% static "core/assets/js/jquery.min.js" %}"></script> 
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var editor = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
+            mode: "python",
+            theme: "dracula", // Vous pouvez choisir un thème parmi ceux disponibles
+            lineNumbers: true, // Pour afficher les numéros de ligne (facultatif)
+            indentUnit: 4,
+        });
+    });
+</script>
+
+<script>
+    document.getElementById("ResponseForms").addEventListener("submit", function() {
+            // Affichez le loader lorsque le formulaire est soumis
+        document.getElementById("spinner").style.display = "block";
+            // Désactivez le bouton de soumission
+        document.getElementById("content").style.display = "none";
+    });
+</script>
+
+{% endblock %}

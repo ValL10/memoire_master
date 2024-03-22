@@ -1,0 +1,145 @@
+{% extends 'core/base.html' %}
+
+{% block title %}
+    Ajouter Enseignant
+{% endblock %}
+
+{% block navbar %}
+    {% include 'core/navbar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="text-center mt-5" style="z-index:2000; height: 20vh; display: none" id="spinner">
+
+    <div class="spinner-grow text-dark" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+
+    <div class="spinner-grow text-warning" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="spinner-grow text-dark" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+
+    <div class="spinner-grow text-warning" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+
+</section>
+
+<section class="container mt-4" id="content">
+    <div class="container-fluid p-2 m-2 card">
+        <div class="container-fluid p-2">
+            <div class="row p-1 d-flex align-items-center justify-content-between">
+                <div class="accordion accordion-flush" id="accordionExample">
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <div class="accordion-button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <h5> Ajouter plusieurs Etudiants en un clic </h5>
+                        </div>
+                      </h2>
+                      <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <div class="col-12 alert alert-info">
+                                <h5 class="text-center">Veuillez choisir un fichier XLSX contenant tous les informations requises pour un étudiant, illustrées sur le tableau ci-dessous</h5>
+                            </div>
+            
+                            <div class="col-12">
+                                <form method="POST" action="{% url 'store_student' %}" id="FilesForms" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="formFile" class="form-label">Choisir un fichier</label>
+                                        <input class="form-control" required type="file" name="studentsFile" id="formFile" accept=".xlsx">
+                                    </div>
+                                    <div class="mb-3 text-end">
+                                        <button class="btn btn-success" type="submit">
+                                            <i class="fas fa-file-import"></i>
+                                            Soumettre le fichier
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <div class="container-fluid p-2 m-2 card">
+        <div class="container-fluid p-2">
+            <div class="row p-1 d-flex align-items-center justify-content-between">
+                <div class="col-12">
+                    <table class="table table-hover">
+                        <thead class="alert alert-info">
+                          <tr>
+                            <th class="text-left" scope="col"><strong>Nom<span class="text-danger">*</span></strong></th>
+                            <th class="text-left" scope="col"><strong>Prénom</strong><span class="text-danger">*</span></th>
+                            <th class="text-left" scope="col"><strong>Numero Etudiant</strong><span class="text-danger">*</span></th>
+                            <th class="text-left" scope="col"><strong>Nom d'utilisateur (temporaire)<span class="text-danger">*</span></strong></th>
+                            <th class="text-left" scope="col"><strong>Email</strong><span class="text-danger">*</span></th>
+                            <th class="text-left" scope="col"><strong>Mot de passe (temporaire)<span class="text-danger">*</span></strong></th>
+                            <th class="text-left" scope="col"><strong>Niveau</strong><span class="text-danger">*</span></th>
+                            <th class="text-left" scope="col"><strong>Parcours</strong><span class="text-danger">*</span></th>
+                          </tr>
+                        </thead>
+                        <tbody id="table_body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+</section>
+
+{% load static %}
+<script src={% static "core/assets/js/xlsx.full.js" %}></script>
+<script src={% static "core/assets/js/jquery.min.js" %}></script>
+
+<script>
+    $(document).ready(function() {
+        $('#formFile').change(function(e) {
+            var fichier = e.target.files[0];
+            var lecteur = new FileReader();
+
+            lecteur.onload = function(e) {
+                var contenu = e.target.result;
+                var tableau = XLSX.read(contenu, { type: 'array' });
+
+                var feuille = tableau.Sheets[tableau.SheetNames[0]];
+                var data = XLSX.utils.sheet_to_json(feuille, { header: 1 });
+
+                var tableauHtml = ' ';
+                for (var i = 0; i < data.length; i++) {
+                    tableauHtml += '<tr>';
+                    for (var j = 0; j < data[i].length; j++) {
+                        tableauHtml += '<td class="text-left" scope="col">' + data[i][j] + '</td>';
+                    }
+                    tableauHtml += '</tr>';
+                }
+                $('#table_body').html(tableauHtml);
+            };
+
+            if (fichier) {
+                lecteur.readAsArrayBuffer(fichier);
+            } else {
+                // Effacer le contenu du tableau si l'input de fichier est vide
+                $('#table_body').html('');
+            }
+        });
+    });
+</script>
+
+<script>
+    document.getElementById("FilesForms").addEventListener("submit", function() {
+            // Affichez le loader lorsque le formulaire est soumis
+        document.getElementById("spinner").style.display = "block";
+            // Désactivez le bouton de soumission
+        document.getElementById("content").style.display = "none";
+    });
+</script>
+{% endblock %}

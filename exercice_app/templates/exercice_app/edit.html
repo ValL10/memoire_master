@@ -1,0 +1,215 @@
+{% extends 'core/base.html' %}
+
+{% block title %}
+    {{ exercice.titre_exercice }}
+{% endblock %}
+
+
+{% block head %}
+    {% load static %}
+{% endblock %}
+
+{% block navbar %}
+    {% include 'core/navbar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="container p-2 mt-2 shadow-sm hidden">
+    <div class="card p-2">
+        <form method= "POST" action="{% url 'update_exercice' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="exercice_id" value={{ exercice.id }}>
+            <div class="row">
+                <div class="col-12">
+                    <nav>
+                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <button class="nav-link active" id="nav-correction-tab" data-bs-toggle="tab" data-bs-target="#nav-correction" type="button" role="tab" aria-controls="nav-correction" aria-selected="false">Corrigé</button>
+
+                            <button class="nav-link" id="nav-exercice-tab" data-bs-toggle="tab" data-bs-target="#nav-exercice" type="button" role="tab" aria-controls="nav-exercice" aria-selected="true">Exercice</button>
+                        </div>
+                    </nav>
+                </div>
+    
+                <div class="col-12 " style="height: 500px">                  
+                    <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade" id="nav-exercice" role="tabpanel" aria-labelledby="nav-exercice-tab" tabindex="0">
+                            <h4 class="font-weight-normal lead p-2 m-2"> Modification de l'exercice </h4>
+                            {%if errors != None%}
+                                {%for error in errors%}
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        {{ error }}
+                                        <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                {%endfor%}
+                            {%endif%}
+                            <div class="container p-2 m-2">
+                                <div class="row">
+                                        <div class="col-12">
+
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlInput1" class="form-label">Titre: <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" name="titre_exercice" required id="exampleFormControlInput1" 
+                                                value = "{{ exercice.titre_exercice }}" 
+                                                placeholder="Titre de votre exercice">
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlTextarea1" class="form-label">Description:<span class="text-danger">*</span> </label>
+                                                <textarea class="form-control" name="description_exercice" required id="exampleFormControlTextarea1" rows="3"
+                                                placeholder="Détailler votre exercice ici">{{ exercice.description_exercice }}</textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlTextarea1" class="form-label">Parcours <span class="text-danger">*</span></label>
+                                                <select class="form-select form-select-sm mb-3" name="parcours_cible" required aria-label="Large select example">
+                                                    <option value=""selected
+                                                    {%if exercice.parcours_cible == ""%}
+                                                        selected
+                                                    {%endif%} 
+                                                    >cjoisir</option>
+                                                    <option value="IRD"
+                                                    {%if exercice.parcours_cible == "IRD"%}
+                                                        selected
+                                                    {%endif%}
+                                                    >IRD</option>
+                                                    <option value="MIAGE"
+                                                    {%if exercice.parcours_cible == "MIAGE"%}
+                                                        selected
+                                                    {%endif%}
+                                                    >MIAGE</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlTextarea1" class="form-label">Niveau <span class="text-danger">*</span></label>
+                                                <select class="form-select form-select-sm mb-3" name="niveau_cible" required aria-label="Large select example">
+                                                    <option selected value=""
+                                                        {%if exercice.niveau_cible == ""%}
+                                                            selected
+                                                        {%endif%}
+                                                    >Choisir</option>
+                                                    <option value="L1"
+                                                        {%if exercice.niveau_cible == "L1"%}
+                                                            selected
+                                                        {%endif%}
+                                                    >L1</option>
+                                                    <option value="L2"
+                                                        {%if exercice.niveau_cible == "L2"%}
+                                                            selected
+                                                        {%endif%}
+                                                    >L2</option>
+                                                    <option value="L3"
+                                                        {%if exercice.niveau_cible == "L3"%}
+                                                            selected
+                                                        {%endif%}
+                                                    >L3</option>
+                                                    <option value="M1"
+                                                        {%if exercice.niveau_cible == "M1"%}
+                                                            selected
+                                                        {%endif%}
+                                                    >M1</option>
+                                                    <option value="M2"
+                                                        {%if exercice.niveau_cible == "M2"%}
+                                                            selected
+                                                        {%endif%}
+                                                    >M2</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlTextarea1" class="form-label">Langage à utiliser <span class="text-danger">*</span></label>
+                                                <select class="form-select form-select-sm mb-3" name="langage_exercice" required aria-label="Large select example">
+                                                    <option selected value=""
+                                                        {%if exercice.langage_exercice == ""%}
+                                                            selected
+                                                        {%endif%}
+                                                    >Choisir</option>
+                                                    <option value="python"
+                                                        {%if exercice.langage_exercice == "python"%}
+                                                            selected
+                                                        {%endif%}
+                                                    >Python</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="mb-3">
+                                                <label for="customRange3" class="form-label">Compléxité:</label>
+                                                <input type="range" required class="form-range" name="complexite_exercice" min="1" max="5" step="1" id="customRange3" 
+                                                    value = {{ exercice.complexite_exercice }}
+                                                >
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <span class="text-start">1</span>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <span class="text-end">3</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade show active" id="nav-correction" role="tabpanel" aria-labelledby="nav-correction-tab" tabindex="0">
+
+                            <div class="container p-2">
+                                <div class="row">
+
+                                    <div class="col-12">
+                                        <label class="input-label" for="description_correction">Desciption: </label>
+                                        <textarea name="description_correction" class="form-control m-1">{{ exercice.correction.description_correction }}</textarea>
+                                    </div>
+
+                                    <div class="col-6 mt-2">
+                                        <label for="inputPassword5" class="form-label">Corrigée actuelle</label>
+                                        <textarea id="code-content" readOnly class="form-control codemirror" rows="40">{{ exercice.correction.contenu_correction }}</textarea>
+                                    </div>
+                                    
+                                    <div class="col-6 mt-2">
+                                        <label for="inputPassword5" class="form-label">Nouveau Fichier</label>
+                                        <div class="input-group mb-3">
+                                            <input type="file" class="form-control" accept=".java, .php, .py" name="correction_file" id="inputGroupFile02">
+                                            <label class="input-group-text" for="inputGroupFile02">Upload</label>
+                                        </div>
+                                    </div>
+
+                                </div>    
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-end">
+                    <button type="button" onclick="window.history.back()" class="btn btn-outline-secondary"><i class="fa fa-arrow-circle-left"></i> Annuler</button>
+                    <button type="submit" class="btn btn-success"><i class="fas fa-plus-circle"></i> Enregistrer</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var editor = CodeMirror.fromTextArea(document.getElementById("code-content"), {
+            mode: "python",
+            theme: "dracula", // Vous pouvez choisir un thème parmi ceux disponibles
+            lineNumbers: true, // Pour afficher les numéros de ligne (facultatif)
+            indentUnit: 4,
+            readOnly: true
+        });
+    });
+</script>
+
+{% endblock %}

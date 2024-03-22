@@ -1,0 +1,82 @@
+  <nav class="navbar sticky-top
+  {% if request.user.profile.is_Teacher %}
+    bg-secondary
+  {% elif request.user.profile.is_Admin %}
+    bg-dark
+  {% else%}
+    bg-primary
+  {% endif %}
+  text-white navbar-expand-lg shadow-sm">
+    <div class="container">
+        <a class="navbar-brand text-white" href="{% url 'index' %}"><span class="text-warning"><b>Code</b></span>Grading</a>
+
+        {% if user.is_authenticated %}
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-list"></i>
+          </button>
+          
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'scoreboard_index' %}">Accueil</a>
+              </li>
+
+              {% if request.user.profile.is_Admin %}
+                <li class="nav-item">
+                  <a class="nav-link text-white" href="{% url 'teachers_index' %}">Enseignants</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link text-white" href="{% url 'students_index' %}">Etudiants</a>
+                </li>
+              {% endif %}
+
+              {% if request.user.profile.is_Admin is not True %}
+                <li class="nav-item">
+                  <a class="nav-link text-white" href="{% url 'exercices_index' %}">Exrecices</a>
+                </li>
+              {% endif %}
+
+              {% if request.user.profile.is_Student %}
+                <li class="nav-item">
+                  <a class="nav-link text-white" href="{% url 'responses_index' %}">Réponses</a>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
+
+          <div>
+            <div class="dropdown">
+                <button class="btn
+                {% if request.user.profile.is_Teacher %}
+                  bg-secondary
+                {% elif request.user.profile.is_Admin %}
+                  bg-dark
+                {% else%}
+                  bg-primary
+                {% endif %} 
+                text-white dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button">{{ user.get_full_name }} </button>
+
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="{% url 'index' %}">
+                    Profile
+                  </a>
+                  <form class="dropdown-item justify-content-" method="POST" action="{% url 'logout_user' %}">
+                    {% csrf_token %}
+                    <input type="submit" class="nav-link login" value="Se Déconnecter">
+                  </form>
+                </div>
+            </div>
+          </div>
+
+        {% else %}
+
+        <span class="p-1 text-end">
+          <a class="nav-link login text-end" href="{% url 'login_user' %}">Connexion</a>
+        </span>
+
+        {% endif %}
+
+    </div>
+  </nav>  

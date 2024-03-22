@@ -1,0 +1,79 @@
+{% extends 'core/base.html' %}
+
+{% block title %}
+    Enseignants
+{% endblock %}
+
+{% block navbar %}
+    {% include 'core/navbar.html' %}
+{% endblock %}
+
+{% block content %}
+<section class="container mt-4">
+    <div class="container-fluid p-2 m-2 card">
+        <div class="container-fluid p-2">
+            <div class="row p-1 d-flex align-items-center justify-content-between">
+                <div class="col-12">
+                    <h5 class="display-6">Liste des étudiants (<span class="text-success">{{ count }}</span>) </h5>
+                </div>
+                <div class="col-6">
+                    <a href="{% url 'create_student' %}" class="btn btn-success"><i class="fas fa-plus-circle"></i> Ajouter Etudiants</a>
+                </div>
+
+                <div class="col-6">
+                    <div class="p-2 m-2" id="filterchoice">
+                        <div class="p-1">  
+                        <div class="form-group mt-2">
+                            <form class="d-flex text-end" role="search" method="GET" action="{% url 'search_teacher' %}">
+                                <input class="form-control me-2" name="search" type="search" placeholder="rechercher..." aria-label="Search">
+                                <button class="btn btn-success" type="submit">Rechercher</button>
+                            </form>
+                        </div>                
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>                        
+
+    <div class="container-fluid p-2 m-2">
+        <div class="table table-sm table-responsive">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col"></th>
+                    <th class="text-left" scope="col"><strong>Numéro Etudiant</strong></th>
+                    <th class="text-left" scope="col"><strong>Nom</strong></th>
+                    <th class="text-left" scope="col"><strong>Prénom</strong></th>
+                    <th class="text-left" scope="col"><strong>Username</strong></th>
+                    <th class="text-left" scope="col">Email</th>
+                    <th class="text-left" scope="col"><strong>Parcours et Niveau</strong></th>
+                    <th class="text-left" scope="col"><strong>Dernière Connexion</strong></th>
+                    <th class="text-left" scope="col"><strong>Ajouté le</strong></th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                      {% for etudiant in etudiants %}
+                        <tr>
+                            <td></td>
+                            <td class="text-left" scope="col">{{ etudiant.ni_etudiant }}</td>
+                            <td class="text-left" scope="col">{{ etudiant.user.first_name }}</td>
+                            <td class="text-left" scope="col">{{ etudiant.user.last_name }}</td>
+                            <td class="text-left" scope="col">{{ etudiant.user.username }}</td>
+                            <td class="text-left" scope="col">{{ etudiant.user.email }}</td>
+                            <td class="text-left" scope="col">{{ etudiant.niveau_etudiant }} - {{ etudiant.parcours_etudiant }}</td>
+                            <td class="text-left" scope="col">{{ etudiant.user.last_login|date:"d-m-Y" }}</td>
+                            <td class="text-left" scope="col">{{ etudiant.created_at|date:"d-m-Y" }}</td>
+                            <td>
+                                <a href="" class="btn btn-sm btn-outline-success">
+                                    <i class="fas fa-user-edit"></i> Modifier
+                                </a>
+                            </td>
+                        </tr>
+                      {% endfor %}
+                </tbody>
+            </table>    
+        </div>
+    </div>
+</section>
+{% endblock %}

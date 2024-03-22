@@ -1,0 +1,72 @@
+{% extends 'core/base.html' %}
+
+{% block title %}
+    Connexion
+{% endblock %}
+
+{% block bodystyle %}
+class="bg-primary"
+{% endblock %}
+
+{% block content %}
+<section class="container-fluid bg-primary">
+  <div class="row justify-content-center">
+      <div class="col-md-9 col-lg-12 col-xl-10">
+          <div class="card shadow-lg o-hidden border-0 my-5">
+              <div class="card-body p-0">
+                  <div class="row">
+                      <div class="col-lg-6 d-none d-lg-flex">
+                        {% load static %}
+                        <img src="{% static "core/images/login.jpg" %}" class="img-fluid" alt="Sample image">
+                      </div>
+                      <div class="col-lg-6">
+                          <div class="p-5">
+                              <div class="text-center">
+                                  <h4 class="text-dark mb-4">Connexion</h4>
+                              </div>
+                              {%if error != None %}
+                                <div class="alert alert-danger">
+                                  {{ error }}
+                                </div>
+                              {%endif%}
+
+                              <form action="{% url 'login_user' %}" method="POST" class="m-1">
+                                  {% csrf_token %}
+                                  <!-- Email input -->
+                                  <div class="form-outline mb-4">
+                                    <div class="form-floating mb-3">
+                                      <input type="text" class="form-control" id="floatingInput" required placeholder="votre adresse email" name="useremail">
+                                      <label for="floatingInput">Nom d'utilisateur: </label>
+                                    </div>
+                                  </div>
+                        
+                                  <!-- Password input -->
+                                  <div class="form-outline mb-3">
+                                    <div class="form-floating">
+                                      <input type="password" class="form-control" id="floatingPassword" required placeholder="votre mot de passe" name="userpassword">
+                                      <label for="floatingPassword">Mot de Passe:</label>
+                                    </div>
+                                  </div>
+
+                                  <button class="btn btn-primary d-block btn-user w-100" type="submit">Se Connecter</button>
+                                  <hr>
+                              </form>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+
+<footer class="text-center fixed-bottom text-lg-start bg-white text-muted">
+  <!-- Copyright -->
+  <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.025);">
+      © 2023 Copyright:
+      <a class="text-reset fw-bold" href="{% url 'index' %}">codegrading</a>
+  </div>
+  <!-- Copyright -->
+</footer>
+
+{% endblock %}

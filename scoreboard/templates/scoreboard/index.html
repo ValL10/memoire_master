@@ -1,0 +1,864 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+    Page d'Acceuil
+{% endblock %}
+
+{% block navbar %}
+    {% include 'core/navbar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="container">
+    <div class="mt-2 pt-2">
+        <div class="row d-flex justify-content-between align-items-center mb-4">
+            <div class="col-8">
+                <h4 class="display-6">
+                    {% if user.profile.is_Admin %}
+                        Tableau de Bord du Système
+                    {% else %}
+                        Tableau de Bord Personnel
+                    {% endif %}
+                </h4>
+            </div>
+            <div class="col-4">
+                <select class="form-select form-select-lg mb-3" aria-label="Large select example">
+                    <option value={{ autres_annees.0 }}
+
+                    {% if autres_annees.0 == annee %}
+                        selected
+                    {% endif%}
+                    
+                    > {{ autres_annees.0 }} </option>
+                    <option value={{ annee }}
+
+                    {% if annee == annee %}
+                        selected
+                    {% endif%}
+                    
+                    >{{ annee }}</option>
+
+                    <option value={{ autres_annees.1 }}
+                    {% if autres_annees.1 == annee %}
+                        selected
+                    {% endif%}
+                    >{{ autres_annees.1 }}</option>
+                </select>
+            </div>
+        </div>
+        {% if user.profile.is_Admin %}
+
+            <div class="row">
+                <div class="col-md-6 col-xl-3 mb-4">
+                    <div class="card bg-primary text-white shadow border-start-primary py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center no-gutters">
+                                <div class="col me-2">
+                                    <div class="text-uppercase text-white fw-bold text-xs mb-1">
+                                        <h4>
+                                            + <span id="counter_exercices_total">{{ count_total.exercices }}</span> <span>Exercices</span>
+                                        </h4>
+                                    </div>
+                                        <div class="fw-bold h5 mb-1">
+                                            <span>
+                                                <span id="counter_exercice_annee">{{ count_exercices_annee }}</span> en {{ annee }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                <div class="col-auto"><i class="fas fa-book fa-2x"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3 mb-4">
+                    <div class="card bg-success text-white shadow border-start-success py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center no-gutters">
+                                <div class="col me-2">
+                                    <div class="text-uppercase fw-bold text-xs mb-1">
+                                        <h4>
+                                            +<span id="counter_reponses_total">0</span> <span>Réponses</span>
+                                        </h4>
+                                    </div>
+                                        <div class="fw-bold h5 mb-1">
+                                            <span>
+                                                <span id="counter_reponse_annee">0</span> en {{ annee }} 
+                                            </span>
+                                        </div>
+                                    </div>
+                                <div class="col-auto"><i class="fas fa-code fa-2x text-gray-300"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3 mb-4">
+                    <div class="card bg-light text-primary shadow border-start-info py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center no-gutters">
+                                <div class="col me-2">
+                                    <div class="text-uppercase fw-bold text-xs mb-1">
+                                        <h4>
+                                            + <span id="counter_notes_total">0</span> <span>Notes</span>
+                                        </h4>
+                                    </div>
+                                    <div class="row g-0 align-items-center">
+                                        <div class="col-auto">
+                                            <div class="fw-bold h5 mb-0 me-3">
+                                                <span>
+                                                    <span id="counter_note_annee" >0</span> note en {{ annee }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto"><i class="fas fa-star fa-2x text-gray-300"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3 mb-4">
+                    <div class="card bg-warning text-dark shadow border-start-warning py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center no-gutters">
+                                <div class="col me-2">
+                                    <div class="text-uppercase fw-bold text-xs mb-1">
+                                        <h5>
+                                            <span>
+                                                +<span id="counter_corrections_total">0</span> Corrections
+                                            </span>
+                                        </h5>
+                                    </div>
+                                    <div class="text-dark fw-bold h5 mb-0">
+                                        <span> <span id="counter_correction_annee">0</span> en {{ annee }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-auto"><i class="fas fas fa-copy fa-2x text-gray-300"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-lg-4 col-xl-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <h6 class="text-sucess display-6">
+                                <span></span> 
+                                Utilisation langage</h6>
+                            <div class="chart-area" id="chartdiv-1" style="height: 50vh">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-xl-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <h6 class="text-primary display-6">
+                                <span id="counter_total_users">0</span> 
+                                utilisateurs</h6>
+                            <div class="chart-area" id="chartdiv-2" style="height: 50vh">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-xl-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <h5 class="text-primary text-center">Utilisateurs récents (1 mois)</h5>
+                            <div class="container">
+                                <table class="table table-sm table-responsive table-hover">
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Prenom</th>
+                                        <th>Last Login</th>
+                                    </tr>
+                                    {% if users_recents is None%}
+                                        <tr>
+                                            <td></td>
+                                            <td>Aucun Utilisateur</td>
+                                            <td></td>
+                                        </tr>
+                                    {%else%}
+                                        {% for user in users_recents %}
+                                            <tr>
+                                                <td>{{ user.first_name|slice:'20' }}</td>
+                                                <td>{{ user.last_name|slice:'20' }}</td>
+                                                <td>{{ user.username|slice:'20' }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <h5 class="text-primary text-center">Utilisateur non-actif depuis 1 mois</h5>
+                            <div class="container">
+                                <table class="table table-sm table-responsive table-hover">
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Prenom</th>
+                                        <th>Last Login</th>
+                                    </tr>
+                                    {% if users_non_actifs_since_1month is None%}
+                                        <tr>
+                                            <td></td>
+                                            <td>Aucun Utilisateur</td>
+                                            <td></td>
+                                        </tr>
+                                    {%else%}
+                                        {% for users_non_actif in users_non_actifs_since_1month %}
+                                            <tr>
+                                                <td>{{ users_non_actif.first_name }}</td>
+                                                <td>{{ users_non_actif.last_name }}</td>
+                                                <td>{{ users_non_actif.last_login }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            {% load static %}
+            <script type="application/javascript" src={% static "scoreboard/amcharts/index.js" %}></script>
+            <script type="application/javascript" src={% static "scoreboard/amcharts/percent.js" %}></script>
+            <script type="application/javascript" src={% static "scoreboard/amcharts/xy.js"%}></script> 
+            <script type="application/javascript" src={% static "scoreboard/amcharts/themes/Material.js" %}></script>
+            <script type="application/javascript" src={% static "scoreboard/amcharts/themes/Animated.js" %}></script>
+            <script type="application/javascript" src={% static "scoreboard/amcharts/plugins/json.js"%}></script> 
+            <script src="{% static "core/assets/js/jquery.min.js" %}"></script> 
+            <script src="{% static "core/assets/js/chart.min.js" %}"></script>
+        
+
+            <script>
+                function chart3(){
+
+                    var labels = ['Janvier', 'Fevrier', 'Mars']
+                    var data = [10, 20, 33]
+
+                    var ctx = document.getElementById("barChart").getContext('2d');
+
+                    var barChart = new Chart(ctx, {
+                        type: 'bar', // Type de graphique en barres
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Exemple de graphique en barres',
+                                data: data,
+                                backgroundColor: 'rgba(75, 192, 192, 0.8)', // Couleur de remplissage des barres
+                                borderColor: 'rgba(75, 192, 192, 1)', // Couleur de la bordure des barres
+                                borderWidth: 1 // Largeur de la bordure
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true // Commencer l'axe y à zéro
+                                }
+                            }
+                        }
+                    });
+
+
+                }
+
+                chart3()
+            </script>
+
+            <script>
+                $(document).ready(function() {
+                    var duration = 700; 
+                
+                    function animateCounter(div, endValue) {
+                        $(div).prop('Counter', 0).animate({
+                            Counter: endValue
+                        }, {
+                            duration: duration,
+                            easing: 'swing',
+                            step: function(now) {
+                                $(div).text(Math.ceil(now));
+                            }
+                        });
+                    }
+                
+                    animateCounter('#counter_exercices_total', '{{ count_total.exercices }}');
+                    animateCounter('#counter_exercice_annee', '{{ count_exercices_annee }}');
+
+                    animateCounter('#counter_reponses_total', '{{ count_total.reponses }}');
+                    animateCounter('#counter_reponse_annee', '{{  count_reponses_annee  }}');
+
+                    animateCounter('#counter_notes_total', '{{ count_total.notes }}');
+                    animateCounter('#counter_note_annee', '{{  count_notes_annee  }}');
+
+                    animateCounter('#counter_corrections_total', '{{ count_total.corrections }}');
+                    animateCounter('#counter_correction_annee', '{{  count_corrections_annee  }}');
+
+
+                    animateCounter('#counter_total_users', '{{ count_total.users }}')
+                });
+            </script>
+
+            <script>
+                function chart1(){
+                    // Create root element
+                    var root = am5.Root.new("chartdiv-1");
+        
+                    // Set themes
+                    // https://www.amcharts.com/docs/v5/concepts/themes/
+                    root.setThemes([
+                        am5themes_Material.new(root)
+                    ]);
+        
+        
+                    // Create chart
+                    // https://www.amcharts.com/docs/v5/charts/percent-charts/pie-chart/
+                    var chart = root.container.children.push(am5percent.PieChart.new(root, {
+                        layout: root.verticalLayout
+                    }));
+        
+        
+                    // Create series
+                    // https://www.amcharts.com/docs/v5/charts/percent-charts/pie-chart/#Series
+                    var series = chart.series.push(am5percent.PieSeries.new(root, {
+                        alignLabels: true,
+                        calculateAggregates: true,
+                        valueField: "exe_count",
+                        categoryField: "langage_exercice"
+                    }));
+        
+                    series.slices.template.setAll({
+                        strokeWidth: 3,
+                        stroke: am5.color(0xffffff)
+                    });
+        
+                    series.labelsContainer.set("paddingTop", 30)
+        
+                    var data = [
+                        {% for item in number_by_langage %}
+                            {{ item|safe }} {% if item is not forloop.last %},{%endif%}
+                        {%endfor%}
+                    ]
+                    
+                    // Set data
+                    // https://www.amcharts.com/docs/v5/charts/percent-charts/pie-chart/#Setting_data
+                    series.data.setAll(data);
+        
+        
+                    // Create legend
+                    // https://www.amcharts.com/docs/v5/charts/percent-charts/legend-percent-series/
+                    var legend = chart.children.push(am5.Legend.new(root, {
+                    centerX: am5.p50,
+                    x: am5.p50,
+                    marginTop: 15,
+                    marginBottom: 15
+                    }));
+        
+                    legend.data.setAll(series.dataItems);
+        
+        
+                    // Play initial series animation
+                    // https://www.amcharts.com/docs/v5/concepts/animations/#Animation_of_series
+                    series.appear(1000, 100);
+                }
+        
+                chart1()
+        
+                function chart2(){
+                    // Create root element
+                    var root = am5.Root.new("chartdiv-2");
+        
+                    // Set themes
+                    // https://www.amcharts.com/docs/v5/concepts/themes/
+                    root.setThemes([
+                        am5themes_Animated.new(root)
+                    ]);
+        
+        
+                    // Create chart
+                    // https://www.amcharts.com/docs/v5/charts/percent-charts/pie-chart/
+                    var chart = root.container.children.push(am5percent.PieChart.new(root, {
+                        layout: root.verticalLayout
+                    }));
+        
+        
+                    // Create series
+                    // https://www.amcharts.com/docs/v5/charts/percent-charts/pie-chart/#Series
+                    var series = chart.series.push(am5percent.PieSeries.new(root, {
+                        alignLabels: true,
+                        calculateAggregates: true,
+                        valueField: "value",
+                        categoryField: "category"
+                    }));
+        
+                    series.slices.template.setAll({
+                        strokeWidth: 3,
+                        stroke: am5.color(0xffffff)
+                    });
+        
+                    series.labelsContainer.set("paddingTop", 30)
+        
+        
+                    // Set up adapters for variable slice radius
+                    // https://www.amcharts.com/docs/v5/concepts/settings/adapters/
+                    series.slices.template.adapters.add("radius", function (radius, target) {
+                    var dataItem = target.dataItem;
+                    var high = series.getPrivate("valueHigh");
+        
+                    if (dataItem) {
+                        var value = target.dataItem.get("valueWorking", 0);
+                        return radius * value / high
+                    }
+                    return radius;
+                    });
+        
+        
+                    // Set data
+                    // https://www.amcharts.com/docs/v5/charts/percent-charts/pie-chart/#Setting_data
+                    series.data.setAll([{
+                    value: {{ count_total.users_students }},
+                    category: "Etudiants"
+                    }, {
+                    value: {{ count_total.users_teachers }},
+                    category: "Enseignants"
+                    },{
+                        value: {{ count_total.users_admins }},
+                        category: "Admins"
+                    }]);
+        
+        
+                    // Create legend
+                    // https://www.amcharts.com/docs/v5/charts/percent-charts/legend-percent-series/
+                    var legend = chart.children.push(am5.Legend.new(root, {
+                    centerX: am5.p50,
+                    x: am5.p50,
+                    marginTop: 15,
+                    marginBottom: 15
+                    }));
+        
+                    legend.data.setAll(series.dataItems);
+        
+        
+                    // Play initial series animation
+                    // https://www.amcharts.com/docs/v5/concepts/animations/#Animation_of_series
+                    series.appear(1000, 100);
+                }
+        
+                chart2()
+        
+            </script>
+
+        {% elif user.profile.is_Teacher %}
+
+            <div class="row">
+                <div class="col-md-6 col-xl-3 mb-4">
+                    <div class="card bg-secondary text-white shadow border-start-primary py-2" style="height: 15vh">
+                        <div class="card-body">
+                            <div class="row align-items-center no-gutters">
+                                <div class="col me-2">
+                                    <div class="text-uppercase text-white fw-bold text-xs mb-1">
+                                        <h5>
+                                            <span>{{ count_total.exercices_ens }}</span> <span>Exercices </span>
+                                        </h5>
+                                    </div>
+                                        <div class="fw-bold h5 mb-1">
+                                            <span>
+                                                <span>{{ count_exercices_annee_ens }}</span> en {{ annee }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                <div class="col-auto"><i class="fas fa-book fa-2x"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-xl-1 mb-4">
+                    <div class="card bg-warning text-dark shadow border-start-warning py-2" style="height: 15vh">
+                        <div class="card-body">
+                            <div class="row align-items-center no-gutters">
+                                <div class="col me-2">
+                                    <div class="text-uppercase fw-bold text-xs mb-1">
+                                        <h5>
+                                            <span>
+                                                Min
+                                            </span>
+                                        </h5>
+                                    </div>
+                                    <div class="text-dark fw-bold h5 mb-0">
+                                        <span>{{ notes_min_max.0 }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-xl-3 mb-4">
+                    <div class="card bg-primary text-white shadow border-start-success py-2" style="height: 15vh">
+                        <div class="card-body">
+                            <div class="row align-items-center no-gutters">
+                                <div class="col me-2">
+                                    <div class="text-uppercase fw-bold text-xs mb-1">
+                                        <h5>
+                                            <span>Note Moyenne</span> <span>{{ note_moyenne }}</span>
+                                        </h5>
+                                    </div>
+                                        <div class="fw-bold h5 mb-1">
+                                        </div>
+                                    </div>
+                                <div class="col-auto"><i class="fas fa-code fa-2x text-gray-300"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-xl-1 mb-4">
+                    <div class="card bg-success text-white shadow border-start-warning py-2 "style="height: 15vh">
+                        <div class="card-body">
+                            <div class="row align-items-center no-gutters">
+                                <div class="col me-2">
+                                    <div class="text-uppercase fw-bold text-xs mb-1">
+                                        <h5>
+                                            <span>
+                                                Max
+                                            </span>
+                                        </h5>
+                                    </div>
+                                    <div class="text-white fw-bold mb-0">
+                                        <span>{{ notes_min_max.1 }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-xl-3 mb-4">
+                    <div class="card bg-light text-primary shadow border-start-info py-2" style="height: 15vh">
+                        <div class="card-body">
+                            <div class="row align-items-center no-gutters">
+                                <div class="col me-2">
+                                    <div class="text-uppercase fw-bold text-xs mb-1">
+                                        <h5>
+                                            <span></span> <span>Langage Préféré</span>
+                                        </h5>
+                                    </div>
+                                    <div class="row g-0 align-items-center">
+                                        <div class="col-auto">
+                                            <div class="fw-bold h5 mb-0 me-3">
+                                                <span>
+                                                    {{ langage_pref.0.langage_exercice }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto"><i class="fas fa-star fa-2x text-gray-300"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row d-flex justify-content-between align-items-start">
+                {% if dernier_exercice is not None %}
+
+                    <div class="col-6">
+                        <div class="container">
+                            <div class="card p-2 mt-2 shadow-sm text-start">
+                                <h6 class="container display-6">Quelques exercices récent</h6>
+                                <div class="container mt-2">
+                                    <table class="table table-responsive">
+                                        <thead>
+                                            <tr>
+                                            <th scope="col">Titre</th>
+                                            <th scope="col">Niveau</th>
+                                            <th scope="col">Parcours</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                {% for exercice in exercices_recents %}
+                                                    <tr>
+                                                        <td scope="col">{{ exercice.titre_exercice|slice:"20" }} ...</td>
+                                                        <td scope="col">{{ exercice.niveau_cible }}</td>
+                                                        <td scope="col">{{ exercice.parcours_cible }}</td>
+                                                        <td scope="col">
+                                                            <a href="{% url 'show_exercice' exercice.id %}">voir</a>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-6">
+                        <div class="container">
+                            <div class="card p-2 mt-2 shadow-sm text-start">
+                                <h4 class="display-6 m-4">Résultat du dernier exercice.
+                                    
+                                </h4>
+                                <div class="container mt-2 text-end">
+                                    <a href="{% url 'liste_exercice_responses' dernier_exercice.id %}" class="nav-link">
+                                        voir en détails
+                                    </a>
+                                </div>
+                                <canvas class="container" id="teacherlastexercice" style="height: 100%, width: 100%"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col-12">
+                        <div class="container" >
+                            <div class="card p-2 mt-2 shadow-lg text-center" style="height: 50vh, width: 100%">
+                                <div class="container jumbotron mt-2 text-center">
+                                    <h3 class="display-6 mt-4 mb-4">Crééz votre tout premier Exercice</h3>
+                                    <a class="btn btn-lg btn-outline-primary" href="{% url 'create_exercice' %}">C'est parti !</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            {% load static %}
+
+            <script type="application/javascript" src={% static "scoreboard/amcharts/index.js" %}></script>
+            <script type="application/javascript" src={% static "scoreboard/amcharts/percent.js" %}></script>
+            <script type="application/javascript" src={% static "scoreboard/amcharts/xy.js"%}></script> 
+            <script type="application/javascript" src={% static "scoreboard/amcharts/themes/Material.js" %}></script>
+            <script type="application/javascript" src={% static "scoreboard/amcharts/themes/Animated.js" %}></script>
+            <script type="application/javascript" src={% static "scoreboard/amcharts/plugins/json.js"%}></script> 
+            <script src="{% static "core/assets/js/jquery.min.js" %}"></script> 
+            <script src="{% static "core/assets/js/chart.min.js" %}"></script>
+
+            <script>
+                function chartTeacherLastExercice(){
+        
+                    var labels = {{ note_dernier_exercice.0|safe }}
+                    var data = {{ note_dernier_exercice.1|safe }}
+
+                    console.log(data)
+                    console.log(labels)
+        
+                    var ctx = document.getElementById("teacherlastexercice").getContext('2d');
+                    ctx.scale(16, 16)
+        
+                    var barChart = new Chart(ctx, {
+                        type: 'bar', // Type de graphique en barres
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Exemple de graphique en barres',
+                                data: data,
+                                backgroundColor: 'rgba(120, 142, 175, 0.8)', // Couleur de remplissage des barres
+                                borderColor: 'rgba(189, 142, 189, 1)', // Couleur de la bordure des barres
+                                borderWidth: 1,
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        dispaly: false
+                                    } // Commencer l'axe y à zéro
+                                }
+                            }
+                        }
+                    });
+        
+        
+                }
+        
+                chartTeacherLastExercice()
+            </script>
+
+        {% elif user.profile.is_Student %}
+
+            <div class="row">
+                <div class="col-md-6 col-xl-3 mb-4">
+                    <div class="card bg-primary text-white shadow border-start-primary py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center no-gutters">
+                                <div class="col me-2">
+                                    <div class="text-uppercase text-white fw-bold text-xs mb-1">
+                                        <h5>
+                                            <span>{{ exercice_realises }}</span> <span>Exercices réalisés</span>
+                                        </h5>
+                                    </div>
+                                        <div class="fw-bold h5 mb-1">
+                                            <span>
+                                                <span id="counter_exercice_annee">{{ reponses_soumises_annee }}</span> en {{ annee }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                <div class="col-auto"><i class="fas fa-book fa-2x"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3 mb-4">
+                    <div class="card bg-success text-white shadow border-start-success py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center no-gutters">
+                                <div class="col me-2">
+                                    <div class="text-uppercase fw-bold text-xs mb-1">
+                                        <h5>
+                                            <span>{{ reponses_soumises }}</span><span> Réponses soumises</span>
+                                        </h5>
+                                    </div>
+                                        <div class="fw-bold h5 mb-1">
+                                            <span>
+                                                <span>{{ reponses_soumises }}</span></span> en {{ annee }} 
+                                            </span>
+                                        </div>
+                                    </div>
+                                <div class="col-auto"><i class="fas fa-code fa-2x text-gray-300"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3 mb-4">
+                    <div class="card bg-light text-primary shadow border-start-info py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center no-gutters">
+                                <div class="col me-2">
+                                    <div class="text-uppercase fw-bold text-xs mb-1">
+                                        <h4>
+                                            <span>Note Moyenne</span>
+                                        </h4>
+                                    </div>
+                                    <div class="row g-0 align-items-center">
+                                        <div class="col-auto">
+                                            <div class="fw-bold h5 mb-0 me-3">
+                                                <span>
+                                                    <span>{{ moyenne_reponses }} / 20</span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto"><i class="fas fa-star fa-2x text-gray-300"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-xl-1 mb-4">
+                    <div class="card bg-warning text-dark shadow border-start-warning py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center no-gutters">
+                                <div class="col me-2">
+                                    <div class="text-uppercase fw-bold text-xs mb-1">
+                                        <h6>
+                                            <span>
+                                                Note Min
+                                            </span>
+                                        </h6>
+                                    </div>
+                                    <div class="text-dark fw-bold h5 mb-0">
+                                        <span>{{ note_min_max.0 }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-xl-1">
+                    <div class="card bg-primary text-white shadow border-start-warning py-2">
+                        <div class="card-body">
+                            <div class="text-uppercase text-xs mb-1">
+                                <h6>
+                                    <span>
+                                        Note Max
+                                    </span>
+                                </h6>
+                            </div>
+                            <div class="text-white mb-0">
+                                <span>{{ note_min_max.1 }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="container mt-2 mb-2 p-2">
+                <div class="card shadow-sm mt-2 p-2">
+                    <div class="text-start text-primary">
+                        <h6 class="display-6"> Evolution de votre note </h6>
+                    </div>
+                    <canvas class="container" id="allnotesetudiants"></canvas>
+                </div>
+            </div>
+
+            {% load static %}
+
+            <script type="application/javascript" src={% static "scoreboard/amcharts/index.js" %}></script>
+            <script type="application/javascript" src={% static "scoreboard/amcharts/percent.js" %}></script>
+            <script type="application/javascript" src={% static "scoreboard/amcharts/xy.js"%}></script> 
+            <script type="application/javascript" src={% static "scoreboard/amcharts/themes/Material.js" %}></script>
+            <script type="application/javascript" src={% static "scoreboard/amcharts/themes/Animated.js" %}></script>
+            <script type="application/javascript" src={% static "scoreboard/amcharts/plugins/json.js"%}></script> 
+            <script src="{% static "core/assets/js/jquery.min.js" %}"></script> 
+            <script src="{% static "core/assets/js/chart.min.js" %}"></script>
+
+            <script>
+                function chartEtudiant(){
+        
+                    var labels = {{ notes_dates.1|safe }}
+                    var data = {{ notes_dates.0|safe }}
+
+                    console.log(data)
+                    console.log(labels)
+        
+                    var ctx = document.getElementById("allnotesetudiants").getContext('2d');
+                    ctx.scale(16, 16)
+        
+                    var barChart = new Chart(ctx, {
+                        type: 'bar', // Type de graphique en barres
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Exemple de graphique en barres',
+                                data: data,
+                                backgroundColor: 'rgba(120, 142, 175, 0.8)', // Couleur de remplissage des barres
+                                borderColor: 'rgba(189, 142, 189, 1)', // Couleur de la bordure des barres
+                                borderWidth: 1,
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        dispaly: false
+                                    } // Commencer l'axe y à zéro
+                                }
+                            }
+                        }
+                    });
+        
+        
+                }
+        
+                chartEtudiant()
+            </script>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

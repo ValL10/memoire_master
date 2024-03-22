@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="favicon.ico">
+    {% load static %}
+    <link href="{% static "core/assets/css/bootstrap.min.css" %}" rel="stylesheet">
+
+    <link rel="stylesheet" href={% static "core/assets/codemirror/codemirror.min.css" %}>
+    <link rel="stylesheet" href={% static "core/assets/codemirror/monokai.min.css" %}>
+    <link rel="stylesheet" href={% static "core/assets/codemirror/dracula.min.css" %}>
+    <link rel="stylesheet" href={% static "core/assets/codemirror/material.min.css" %}>
+    <link rel="stylesheet" href={% static "core/assets/font/css/all.min.css" %}>
+
+    <script src={% static "core/assets/codemirror/codemirror.min.js" %}></script>
+    <script src= {% static "core/assets/codemirror/python.min.js" %}></script>
+
+
+    <title>
+        {% block title %}
+        
+        {% endblock %} | Autograding
+    </title>
+    {% block head %}
+    {% endblock %}
+</head>
+<body {% block bodystyle %}{% endblock %} data-bs-spy="scroll" >
+    {% block navbar %}
+    {% endblock %}
+
+    {% block content %}
+    {% endblock %}
+
+    {% load static %}
+    <script src="{% static "core/assets/font/js/all.min.js" %}"></script>
+    <script src="{% static "core/assets/js/bootstrap.bundle.min.js" %}"></script>
+</body>
+</html>

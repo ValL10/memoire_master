@@ -1,0 +1,19 @@
+{% extends 'core/base.html' %}
+
+{% block title %}
+    Bienvenue
+{% endblock %}
+
+{% block navbar %}
+    {% include 'core/navbar.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron h-75">
+    <video class="w-100" autoplay loop muted>
+        {% load static %}
+        <source src="{% static "core/videos/landingpage.mp4" %}" type="video/mp4"/>
+    </video>
+</div>
+
+{% endblock %}

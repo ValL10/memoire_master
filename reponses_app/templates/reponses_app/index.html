@@ -1,0 +1,70 @@
+{% extends 'core/base.html' %}
+
+{% block title %}
+    Reponses
+{% endblock %}
+
+{% block navbar %}
+    {% include 'core/navbar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="container">
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-primary alert-dismissible fade show mt-1" role="alert">
+                {% if message.tags == "success" %} {{ message }} {% endif %}
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="row justify-content-between align-items-center mt-2 mb-2 align-items-center h-100">
+        <div class="col-md-6 col-lg-6 col-xl-8">
+            <h5 class="text-start"> Les Exercices que vous avez réalisés: </h5>
+        </div>
+        <div class="col-md-6 col-lg-6 col-xl-4">
+            <form class="d-flex text-end" role="search" method="GET" action="{% url 'search_response' %}">
+                <input class="form-control me-2" name="search" type="search" placeholder="rechercher..." aria-label="Search">
+                <button class="btn btn-success" type="submit">Rechercher</button>
+            </form>
+
+        </div>        
+    </div>
+</section>
+
+<section class="container">
+    <div class="mt-2">
+        <div class="row ml-1">
+            {% for reponse in reponses  %}
+                <div class="col-lg-6 col-md-4">
+                    <div class="card text-secondary mb-3">
+                        <div class="card-header">
+                            <div class="row ml-1">
+                                <div class="col-lg-6 col-md-4">
+                                    <span>{{ reponse.exercice.niveau_cible }}</span>
+                                    <span>{{ reponse.exercice.parcours_cible }}</span>
+                                </div>
+                                <div class="col-lg-6 col-md-4 text-end">
+                                    <span class="text-success"><i class="fas fa-check-circle"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-primary"> {{ reponse.exercice.titre_exercice|slice:":20" }} ...</h5>
+                            <p class="card-text"> {{ reponse.exercice.description_exercice|slice:":50" }} ...</p>
+                            <div class="text-end mt-2">
+                                <a class="btn btn-sm btn-primary " href="{% url 'show_response' reponse.id %}">Afficher</a>
+                            </div>                        
+                        </div>
+                    </div>
+                </div>          
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}

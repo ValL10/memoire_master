@@ -1,0 +1,110 @@
+{% extends 'core/base.html' %}
+
+{% block title %}
+    Exercices
+{% endblock %}
+
+{% block navbar %}
+    {% include 'core/navbar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="container">
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-primary alert-dismissible fade show mt-1" role="alert">
+                {% if message.tags == "success" %} {{ message }} {% endif %}
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="row justify-content-between align-items-center mt-2 mb-2 align-items-center h-100">
+        <div class="col-md-6 col-lg-6 col-xl-8">
+            <h5 class="text-start"> {% if request.user.profile.is_Teacher %}Vos{%endif%} Exercices  </h5>
+            {% if request.user.profile.is_Teacher %}
+                <a href="{% url 'create_exercice' %}" class="btn btn-success"><i class="fas fa-plus-circle"></i> Nouvel Exercice</a>
+            {% endif %}
+        </div>
+        <div class="col-md-6 col-lg-6 col-xl-4">
+            <form class="d-flex text-end" role="search" method="GET" action="{% url 'search_exercice' %}">
+                <input class="form-control me-2" name="search" type="search" placeholder="rechercher..." aria-label="Search">
+                <button class="btn btn-primary" type="submit">Rechercher</button>
+            </form>
+
+        </div>        
+    </div>
+</section>
+
+<section class="container">
+    <div class="mt-2">
+        <div class="row ml-1">
+            {% for exercice in exercices  %}
+                <div class="col-lg-6 col-md-4">
+                    <div class="card text-secondary mb-3">
+                        <div class="card-header">
+                            <div class="row ml-1">
+                                <div class="col-lg-6 col-md-4">
+                                    <span>{{ exercice.niveau_cible }}</span>
+                                    <span>{{ exercice.parcours_cible }}</span>
+                                </div>
+                                <div class="col-lg-6 col-md-4 text-end">
+                                    {% if request.user.profile.is_Teacher %}
+                                        {% if exercice.no_correction %}
+                                            <span class="text-end badge bg-warning text-dark">Sans Correction</span>
+                                        {% else %}
+                                            <span class="text-end badge bg-success text-white">Avec Correction</span>
+                                        {% endif %}
+                                        {% if exercice.no_reponse == False %}
+                                            <span class="text-end badge bg-primary text-white">Répondu</span>
+                                        {% endif %} 
+                                    {% elif request.user.profile.is_Student %}
+                                        {% if exercice in exercices_faites %}
+                                            <span class="text-end badge bg-success text-white">Fait</span>
+                                        {% endif %}
+                                    {% endif %}                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-primary"> {{ exercice.titre_exercice|slice:":20" }} ...</h5>
+                            <p class="card-text"> {{ exercice.description_exercice|slice:":50" }} ...</p>
+                            
+                            <div class="mt-2 align-items-center">
+                                <div class="text-start ">
+                                    <p class="card-text"> {{ exercice.created_at }}</p>
+                                </div>
+                                <div class="text-end ">
+    
+                                    {% if request.user.profile.is_Student %}
+                                        {% if exercice not in exercices_faites %}
+                                            <a class="btn btn-sm btn-success" href="{% url 'submit_response' exercice.id %}">Effectuer</a>
+                                        {% endif %}                         
+                                    {% endif %}
+    
+                                    {% if request.user.profile.is_Teacher %}
+                                        {% if exercice.no_correction%}
+                                            <form method="GET" action="{% url 'edit_exercice' %}">
+                                                <input type="hidden" name="exercice" value={{ exercice.id }}>
+                                                <button type="submit" class="btn btn-sm btn-warning" href="{% url 'edit_exercice' %}">Ajouter Corrigé</button>
+                                            </form>
+                                        {% else %}
+                                            <a class="btn btn-sm btn-primary" href="{% url 'show_exercice' exercice.id %}">Voir</a>
+                                        {% endif %}
+                                        {% if exercice.no_reponse == False %}
+                                            <a class="btn btn-sm btn-outline-success" href="{% url 'liste_exercice_responses' exercice.id %}">Stats</a>
+                                        {% endif %}                        
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>          
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
